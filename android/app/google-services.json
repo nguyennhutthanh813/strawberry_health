@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "860023115896",
+    "project_id": "strawberry-db-536df",
+    "storage_bucket": "strawberry-db-536df.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:860023115896:android:7221c8f2806df7e94f1d8d",
+        "android_client_info": {
+          "package_name": "com.example.strawberry_disease_detection"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC47sHXokTa24J0RB1pA_C_apmWl0CE65A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
