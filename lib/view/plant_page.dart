@@ -16,7 +16,7 @@ import 'package:strawberry_disease_detection/common/widget/dialog.dart';
 import 'package:strawberry_disease_detection/common/widget/history_plant.dart';
 
 class PlantPage extends StatefulWidget {
-  const PlantPage({Key? key}) : super(key: key);
+  const PlantPage({super.key});
 
   @override
   _PlantPageState createState() => _PlantPageState();
@@ -73,7 +73,9 @@ class _PlantPageState extends State<PlantPage>
                     margin: EdgeInsets.symmetric(vertical: TSize.defaultSpace),
                     child: Row(children: [
                       Expanded(
-                        child: SearchBar(),
+                        child: SearchBar(
+                          hintText: "Search",
+                        ),
                       ),
                       SizedBox(width: 20),
                       SortMenuBox(options: [
@@ -100,7 +102,9 @@ class _PlantPageState extends State<PlantPage>
                     margin: EdgeInsets.only(top: TSize.defaultSpace),
                     child: Row(children: [
                       Expanded(
-                        child: SearchBar(),
+                        child: SearchBar(
+                          hintText: "Search",
+                        ),
                       ),
                       SizedBox(width: 20),
                       SortMenuBox(options: [
@@ -120,31 +124,7 @@ class _PlantPageState extends State<PlantPage>
                             scrollDirection: Axis.horizontal,
                             children: [
                               ButtonWidget(
-                                text: Text('Apple',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondary)),
-                                onPressed: () {},
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              ButtonWidget(
-                                text: Text('Potato',
-                                    style: TextStyle(
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onSecondary)),
-                                onPressed: () {},
-                                color: Theme.of(context).colorScheme.secondary,
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              ButtonWidget(
-                                text: Text('Tomato',
+                                text: Text('Disease',
                                     style: TextStyle(
                                         color: Theme.of(context)
                                             .colorScheme

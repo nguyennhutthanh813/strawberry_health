@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:strawberry_disease_detection/firebase_options.dart';
+import 'package:strawberry_disease_detection/view/disease_details_page.dart';
+import 'package:strawberry_disease_detection/view/home_page.dart';
 import 'package:strawberry_disease_detection/view/login_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,6 +17,9 @@ void main() async{
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  await FirebaseAuth.instance.signOut();
+
   runApp(const MyApp());
 }
 
@@ -22,14 +28,24 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? user = FirebaseAuth.instance.currentUser;
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Strawberry Disease Detection',
-      initialRoute: "/login",
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+        appBarTheme: AppBarTheme(
+          backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
+          centerTitle: true,
+        )
+      ),
+      initialRoute: user != null ? "/" : "/login",
       routes: {
-        //"/": (context) => const LandingPage(),
-        "/login": (context) => const LoginPage(),
-
+        "/": (context) => HomePage(),
+        "/login": (context) => LoginPage(),
+        "/disease_details": (context) => DiseaseDetailsPage()
       },
     );
   }

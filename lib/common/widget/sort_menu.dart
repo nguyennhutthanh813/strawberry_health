@@ -30,7 +30,7 @@ class SortMenuBoxState extends DropDownBoxState<SortMenuBox> {
       children: [
         Container(
           width: widget.boxWidth,
-          padding: EdgeInsets.only(bottom: TSize.defaultSpace / 2),
+          padding: EdgeInsets.only(top: TSize.defaultSpace * 2),
           decoration: BoxDecoration(
               boxShadow: [
                 BoxShadow(
@@ -56,7 +56,7 @@ class SortMenuBoxState extends DropDownBoxState<SortMenuBox> {
 
         ),
         Positioned(
-            bottom: -18,
+            top: 0,
             child: Container(
                 padding: EdgeInsets.symmetric(
                     vertical: TSize.defaultSpace * 0.3,

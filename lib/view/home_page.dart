@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:strawberry_disease_detection/view/camera_page.dart';
 import 'package:strawberry_disease_detection/view/plant_page.dart';
 import 'package:strawberry_disease_detection/view/account_page.dart';
 
 class HomePage extends StatefulWidget {
-  static const String route = '/';
   const HomePage({super.key});
 
   @override
@@ -15,7 +15,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> pages = [
     const Center(child: Text('Home Page')),
-    const Center(child: Text('Camera Page')), // Placeholder
+    const CameraPage(),
     const PlantPage(),
     const AccountPage(),
   ];
@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Strawberry Disease Detection'),
+        title: const Text('Strawberry Health Care'),
       ),
       body: pages[currentPage],
       bottomNavigationBar: BottomNavigationBar(

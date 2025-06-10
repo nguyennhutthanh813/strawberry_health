@@ -12,6 +12,17 @@ class PlantService {
     return _instance;
   }
 
+  Future<void> addPlant(Plant plant) async {
+    User? user = _auth.currentUser;
+    if (user == null) return;
+
+    await _fireStore
+        .collection('users')
+        .doc(user.uid)
+        .collection('plants')
+        .add(plant.toMap());
+  }
+
   Future<List<Plant>> getAllPlants() async {
     User? user = _auth.currentUser;
     if (user == null) return [];

@@ -37,6 +37,7 @@ class _AccountPageState extends State<AccountPage> {
       padding: const EdgeInsets.symmetric(horizontal: TSize.defaultSpace / 2),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
+        color: Colors.white
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -49,7 +50,7 @@ class _AccountPageState extends State<AccountPage> {
               border: Border.all(width: 5, color: Colors.transparent),
               image: const DecorationImage(
                 fit: BoxFit.cover,
-                image: AssetImage('assets/images/pfp_1.jpg'),
+                image: AssetImage('assets/icons/launcher_icon.png'),
               ),
             ),
           ),
@@ -65,11 +66,10 @@ class _AccountPageState extends State<AccountPage> {
                     'Welcome',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Theme.of(context).secondaryHeaderColor,
                     ),
                   ),
                   const Text(
-                    'Saparov Almas',
+                    'mine',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
@@ -84,7 +84,7 @@ class _AccountPageState extends State<AccountPage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(TSize.defaultBorderRadius),
               onTap: () {
-                // TODO: Thêm logic logout
+
               },
               child: Padding(
                 padding: const EdgeInsets.all(TSize.defaultSpace * 0.5),
@@ -118,8 +118,8 @@ class _AccountPageState extends State<AccountPage> {
                 endWidget: Text(
                   'English',
                   style: TextStyle(
-                    color: Theme.of(context).secondaryHeaderColor,
-                    fontSize: 16,
+                    color: Colors.grey,
+                    fontSize: 15,
                   ),
                 ),
               ),

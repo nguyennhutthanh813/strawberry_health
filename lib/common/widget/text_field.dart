@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 class TextFieldWidget extends StatelessWidget {
-  const TextFieldWidget(
-      {Key? key,
+  const TextFieldWidget({
+        super.key,
         required this.icon,
         required this.hint,
         this.label,
         this.inputType = TextInputType.name,
         this.inputAction = TextInputAction.next,
-        this.secure = false})
-      : super(key: key);
+        this.secure = false,
+        required this.controller
+      });
 
   final IconData icon;
   final String hint;
@@ -17,6 +18,7 @@ class TextFieldWidget extends StatelessWidget {
   final TextInputType inputType;
   final TextInputAction inputAction;
   final bool secure;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
@@ -24,15 +26,17 @@ class TextFieldWidget extends StatelessWidget {
         height: 70,
         margin: EdgeInsets.symmetric(vertical: 6),
         decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.secondary,
           borderRadius: BorderRadius.circular(20),
         ),
         child: TextField(
+            controller: controller,
             decoration: InputDecoration(
                 labelText: label,
                 prefixIcon: Icon(icon),
-                hintText: hint
+                hintText: hint,
             ),
-            obscureText: secure));
+            obscureText: secure
+        )
+    );
   }
 }

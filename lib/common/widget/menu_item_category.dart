@@ -141,7 +141,7 @@ class SubMenuItem extends StatelessWidget {
       height: 74,
       width: MediaQuery.of(context).size.width - TSize.defaultSpace,
       child: Material(
-        color: Colors.transparent,
+        color: Colors.white,
         child: InkWell(
           borderRadius: BorderRadius.circular(TSize.defaultBorderRadius),
           onTap: () {},

@@ -1,110 +1,194 @@
 import 'package:flutter/material.dart';
 import 'package:strawberry_disease_detection/common/widget/text_field.dart';
+import 'package:strawberry_disease_detection/common/widget/button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:strawberry_disease_detection/view/home_page.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  String errorMessage = '';
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-          child: Container(
-            width: 340,
-            height: 345,
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  height: 320,
-                  width: 340,
-                  padding: EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.23),
-                        blurRadius: 30, // changes position of shadow
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      TextFieldWidget(
-                          icon: Icons.email,
-                          hint: 'Enter you email',
-                          label: 'Email',
-                          inputType: TextInputType.emailAddress),
-                      TextFieldWidget(
-                        icon: Icons.password,
-                        hint: 'Enter you password',
-                        label: 'Password',
-                        secure: true,
-                      ),
-                      Row(children: [
-                        Expanded(
-                            child: Divider(
-                              color: Colors.black54,
-                            )),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          child: Text("or"),
-                        ),
-                        Expanded(
-                            child: Divider(
-                              color: Colors.black54,
-                            )),
-                      ]),
-                      Container(
-                        width: 300,
-                        margin: EdgeInsets.symmetric(vertical: 6),
-                        child: TextButton(
-
-                            onPressed: () {},
-                            child: Text(
-                              'Sign in with google',
-                              style: TextStyle(color: Colors.black54),
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.symmetric(vertical: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text("Don’t have an Account ? "),
-                            GestureDetector(
-                              onTap: () {},
-                              child: Text(
-                                "Sign Up",
-                                style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
+        child: Container(
+          width: 340,
+          height: 345,
+          child: Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                height: 324,
+                width: 340,
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(20),
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.23),
+                      blurRadius: 30, // changes position of shadow
+                    ),
+                  ],
                 ),
-                Positioned(
-                  width: 340,
-                  bottom: 0,
-                  child: Center(
-                    child: Text(
-                      "Login",
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
+                child: Column(
+                  children: [
+                    TextFieldWidget(
+                        icon: Icons.email,
+                        hint: 'Enter you email',
+                        label: 'Email',
+                        controller: emailController,
+                        inputType: TextInputType.emailAddress
+                    ),
+                    TextFieldWidget(
+                      icon: Icons.password,
+                      hint: 'Enter you password',
+                      label: 'Password',
+                      controller: passwordController,
+                      secure: true,
+                    ),
+                    SizedBox(height: 10,),
+                    Center(
+                      child: ButtonWidget(
+                        text: Text('Login'),
+                        color: Color(0xFF28A745),
+                        onPressed: () async {
+
+
+                          final user = await signIn(emailController.text, passwordController.text);
+                          if (!context.mounted) return;
+                          if(user == null) {
+                            showSignUpFailureSnackBar(errorMessage: errorMessage);
+                            return;
+                          }
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => HomePage()),
+                                (route) => false,
+                          );
+                        },
                       ),
                     ),
-                  ),
-                )
-              ],
-            ),
-          )),
+                    SizedBox(height: 20,),
+                    Container(
+                      margin: EdgeInsets.symmetric(vertical: 10),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text("Don’t have an Account ? "),
+                          GestureDetector(
+                            onTap: () {},
+                            child: Text(
+                              "Sign Up",
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
+  Future<User?> signIn(String email, String password) async {
+    try {
+      print("----------------: $email $password");
+      final result = await auth.signInWithEmailAndPassword(email: email, password: password);
+      return result.user;
+    }
+    on FirebaseAuthException catch(e) {
+      if(e.code == 'invalid-credential') {
+        errorMessage = "Email or Password is wrong";
+      }
+      else if(e.code == 'user-disabled') {
+        errorMessage = "Your account are banned by admin";
+      }
+      else {
+        errorMessage = "Cannot login. Something went wrong !";
+      }
+      return null;
+    }
+    catch(e) {
+      return null;
+    }
+  }
+
+  void showSignUpFailureSnackBar({String errorMessage = 'Failed to create account'}) {
+    final size = MediaQuery.of(context).size;
+    final screenHeight = size.height > 600 ? size.height : 600;
+    final verticalRatio = screenHeight/874;
+    final horizontalRatio = size.width/402;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(Icons.error_outline, color: Colors.white),
+            SizedBox(width: 12*horizontalRatio),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Sign-in Failed',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16*verticalRatio,
+                    ),
+                  ),
+                  SizedBox(height: 4*verticalRatio),
+                  Text(
+                    errorMessage,
+                    style: TextStyle(fontSize: 14*verticalRatio),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Color(0xFFDC3545),
+        duration: Duration(seconds: 5),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
+        margin: EdgeInsets.symmetric(horizontal: 12*horizontalRatio, vertical: 12*verticalRatio),
+        action: SnackBarAction(
+          label: 'TRY AGAIN',
+          textColor: Colors.white,
+          onPressed: () {
+            // Logic to retry or focus on the form
+            // You could also dismiss the SnackBar here if needed
+          },
+        ),
+      ),
+    );
+  }
+
 }
