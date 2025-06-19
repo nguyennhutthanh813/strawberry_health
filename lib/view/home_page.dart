@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:strawberry_disease_detection/view/camera_page.dart';
+import 'package:strawberry_disease_detection/view/environment_conditions_page.dart';
 import 'package:strawberry_disease_detection/view/plant_page.dart';
 import 'package:strawberry_disease_detection/view/account_page.dart';
+
+import '../provider/environment_conditions_provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,7 +18,7 @@ class _HomePageState extends State<HomePage> {
   int currentPage = 0;
 
   final List<Widget> pages = [
-    const Center(child: Text('Home Page')),
+    const EnvironmentConditionsPage(),
     const CameraPage(),
     const PlantPage(),
     const AccountPage(),
