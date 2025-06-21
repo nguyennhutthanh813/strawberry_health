@@ -1,31 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:strawberry_disease_detection/common/widget/text_field.dart';
 import 'package:strawberry_disease_detection/common/widget/button.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:strawberry_disease_detection/view/home_page.dart';
+import 'package:strawberry_disease_detection/provider/authentication_provider.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
-  @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  final FirebaseAuth auth = FirebaseAuth.instance;
-  String errorMessage = '';
+class LoginPage extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
   @override
-  void dispose() {
-    emailController.dispose();
-    passwordController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthenticationProvider>(context);
     return Scaffold(
       body: Center(
         child: Container(
@@ -70,12 +56,10 @@ class _LoginPageState extends State<LoginPage> {
                         text: Text('Login'),
                         color: Color(0xFF28A745),
                         onPressed: () async {
-
-
-                          final user = await signIn(emailController.text, passwordController.text);
+                          await authProvider.login(emailController.text.trim(), passwordController.text.trim());
                           if (!context.mounted) return;
-                          if(user == null) {
-                            showSignUpFailureSnackBar(errorMessage: errorMessage);
+                          if(authProvider.user == null) {
+                            showSignInFailureSnackBar(context: context);
                             return;
                           }
                           Navigator.pushAndRemoveUntil(
@@ -116,30 +100,8 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<User?> signIn(String email, String password) async {
-    try {
-      print("----------------: $email $password");
-      final result = await auth.signInWithEmailAndPassword(email: email, password: password);
-      return result.user;
-    }
-    on FirebaseAuthException catch(e) {
-      if(e.code == 'invalid-credential') {
-        errorMessage = "Email or Password is wrong";
-      }
-      else if(e.code == 'user-disabled') {
-        errorMessage = "Your account are banned by admin";
-      }
-      else {
-        errorMessage = "Cannot login. Something went wrong !";
-      }
-      return null;
-    }
-    catch(e) {
-      return null;
-    }
-  }
 
-  void showSignUpFailureSnackBar({String errorMessage = 'Failed to create account'}) {
+  void showSignInFailureSnackBar({required BuildContext context, String errorMessage = 'Failed to create account'}) {
     final size = MediaQuery.of(context).size;
     final screenHeight = size.height > 600 ? size.height : 600;
     final verticalRatio = screenHeight/874;
@@ -190,5 +152,6 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
 
 }

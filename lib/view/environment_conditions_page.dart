@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
 import 'package:strawberry_disease_detection/common/widget/sensor_row.dart';
+import 'package:strawberry_disease_detection/common/widget/wifi_loading.dart';
 
 import 'package:strawberry_disease_detection/provider/environment_conditions_provider.dart';
 
@@ -15,7 +16,6 @@ class EnvironmentConditionsPage extends StatefulWidget{
 class _EnvironmentConditionsPageState extends State<EnvironmentConditionsPage> {
   bool ledStatus = false;
   bool relayStatus = false;
-  String statusMessage = "Chưa kết nối";
 
   final String topicControl = 'esp8266/control';
   final String topicStatus = 'esp8266/status';
@@ -23,11 +23,6 @@ class _EnvironmentConditionsPageState extends State<EnvironmentConditionsPage> {
   @override
   void initState() {
     super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final environmentConditions = Provider.of<EnvironmentConditionsProvider>(context, listen: false);
-      environmentConditions.setupMQTT();
-    });
   }
 
   // void publishMessage(String message) {
@@ -57,24 +52,25 @@ class _EnvironmentConditionsPageState extends State<EnvironmentConditionsPage> {
                   padding: EdgeInsets.all(16.0),
                   child: Column(
                     children: [
+                      environmentConditions.isConnected ?
                       Icon(
-                        environmentConditions.isConnected ? Icons.wifi : Icons.wifi_off,
-                        color: environmentConditions.isConnected ? Colors.green : Colors.red,
+                        Icons.wifi,
+                        color: Colors.green,
                         size: 48,
-                      ),
+                      ) : WifiLoading()
+                      ,
                       SizedBox(height: 8),
                       Text(
                         'Trạng thái: ${environmentConditions.isConnected ? "Đã kết nối" : "Chưa kết nối"}',
                         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                       ),
-                      Text(statusMessage),
                     ],
                   ),
                 ),
               ),
-              SensorRow(imagePath: "assets/images/thermometer.png", title: "Temperature", value: "25°C"),
-              SensorRow(imagePath: "assets/images/humidity.png", title: "Humidity", value: "25°C"),
-              SensorRow(imagePath: "assets/images/sun.png", title: "Temperature", value: "25°C"),
+              SensorRow(imagePath: "assets/images/thermometer.png", title: "Temperature", value: "${environmentConditions.conditions.temperature}°C"),
+              SensorRow(imagePath: "assets/images/humidity.png", title: "Humidity", value: "${environmentConditions.conditions.humidity}°C"),
+              SensorRow(imagePath: "assets/images/sun.png", title: "Lux", value: "25°C"),
         
               SizedBox(height: 20),
         

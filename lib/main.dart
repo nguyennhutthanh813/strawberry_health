@@ -9,6 +9,7 @@ import 'package:strawberry_disease_detection/view/login_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:strawberry_disease_detection/provider/authentication_provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,7 +34,11 @@ class MyApp extends StatelessWidget {
 
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => EnvironmentConditionsProvider())
+        ChangeNotifierProvider(create: (_) => AuthenticationProvider()),
+        ChangeNotifierProxyProvider<AuthenticationProvider, EnvironmentConditionsProvider>(
+          create: (_) => EnvironmentConditionsProvider(userId: ''),
+          update: (_, authProvider, _) => EnvironmentConditionsProvider(userId: authProvider.userId),
+        ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

@@ -13,13 +13,13 @@ class EnvironmentConditionsProvider with ChangeNotifier {
   EnvironmentConditions _conditions = EnvironmentConditions(
     temperature: 0.0,
     humidity: 0.0,
-    // soilMoisture: 0.0,
-    // lux: 0.0,
+    soilMoisture: 0.0,
+    lux: 0.0,
   );
 
   FirebaseFirestore fireStore = FirebaseFirestore.instance;
   late String? uid;
-
+  bool setupStateFlag = false;
   // MQTT client
   late MqttServerClient client;
 
@@ -32,12 +32,23 @@ class EnvironmentConditionsProvider with ChangeNotifier {
 
   EnvironmentConditions get conditions => _conditions;
 
+  EnvironmentConditionsProvider({required String userId}) {
+    uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null || uid!.isEmpty) {
+      print("User is not logged in, cannot setup MQTT client.");
+      return;
+    }
+    if(setupStateFlag == false) {
+      print("Setting up MQTT client for user: $uid");
+      setupStateFlag = true;
+      setupMQTT();
+    }
+  }
 
   Future<void> setupMQTT() async {
     print("Setting up MQTT client.....................................");
     String mqttUsername = '';
     String mqttPassword = '';
-    uid = FirebaseAuth.instance.currentUser?.uid;
     if(uid != null) {
       await fireStore.collection('users').doc(uid).get().then((doc) {
         if (doc.exists) {
@@ -102,8 +113,8 @@ class EnvironmentConditionsProvider with ChangeNotifier {
     final data = json.decode(message);
     _conditions.humidity = data['humidity']?.toDouble() ?? 0.0;
     _conditions.temperature = data['temperature']?.toDouble() ?? 0.0;
-    // _conditions.soilMoisture = data['soilMoisture']?.toDouble() ?? 0.0;
-    // _conditions.lux = data['lux']?.toDouble() ?? 0.0;
+    _conditions.soilMoisture = data['soilMoisture']?.toDouble() ?? 0.0;
+    _conditions.lux = data['lux']?.toDouble() ?? 0.0;
 
     notifyListeners();
   }
